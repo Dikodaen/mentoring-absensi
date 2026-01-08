@@ -8,9 +8,9 @@ import { Modal } from "@/components/ui/Modal";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
 import { Input } from "@/components/ui/Input";
-import { Calendar as CalendarIcon, Upload } from "lucide-react";
-import DashboardLayout from "@/components/layout/DashboardLayout";
+import { Calendar as CalendarIcon, Upload, LogOut } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface AttendanceRecord {
     day: string;
@@ -20,6 +20,7 @@ interface AttendanceRecord {
 }
 
 export default function EmployeeAttendancePage() {
+    const router = useRouter();
     // Timer State
     const [currentTime, setCurrentTime] = useState<Date | null>(null);
 
@@ -122,88 +123,124 @@ export default function EmployeeAttendancePage() {
         alert("Pengajuan izin berhasil dikirim.");
     };
 
+    const handleLogout = () => {
+        router.push("/login");
+    };
+
     return (
-        <DashboardLayout>
-            <div className="w-full min-h-screen bg-[#F8FAFC] p-4 md:p-8">
-                <div className="w-full max-w-4xl mx-auto space-y-8">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h1 className="text-2xl font-bold text-slate-900">Absensi Saya</h1>
-                            <p className="text-sm text-slate-500">Catat kehadiran Anda hari ini</p>
+        <div className="min-h-screen bg-[#F8FAFC]">
+            {/* Header */}
+            <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
+                <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+                    <div>
+                        <h1 className="font-bold text-lg text-slate-800">Sistem Absensi</h1>
+                        <p className="text-xs text-slate-500">Karyawan</p>
+                    </div>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-500 hover:text-red-600 hover:bg-red-50 gap-2"
+                        onClick={handleLogout}
+                    >
+                        <LogOut className="w-4 h-4" />
+                        Keluar
+                    </Button>
+                </div>
+            </header>
+
+            <main className="max-w-4xl mx-auto p-4 md:p-8 space-y-6">
+                <Card className="w-full p-6 md:p-8 border border-slate-100 shadow-sm bg-white rounded-xl">
+                    <div className="bg-slate-50 rounded-[16px] p-8 mb-8 border border-slate-100 relative">
+                        {/* Realtime Clock */}
+                        <div className="flex flex-col items-center justify-center mb-8 text-center">
+                            <p className="text-sm font-medium text-slate-500 mb-2 uppercase tracking-wide">Waktu Sekarang</p>
+                            <h2 className="text-5xl md:text-6xl font-bold text-slate-900 tracking-tight tabular-nums mb-2">
+                                {currentTime ? formatTime(currentTime) : "00:00:00"}
+                            </h2>
+                            <p className="text-lg text-slate-600 font-medium">
+                                {currentTime ? formatDate(currentTime) : "..."}
+                            </p>
+                        </div>
+
+                        {/* Action Buttons */}
+                        {todayStatus !== "izin" && (
+                            <div className="grid grid-cols-2 gap-4 max-w-lg mx-auto mt-8">
+                                <Button
+                                    className="h-14 text-lg w-full bg-[#00A3FF] hover:bg-[#0092E6]"
+                                    onClick={handleCheckIn}
+                                    disabled={isCheckedIn}
+                                >
+                                    {isCheckedIn ? "Sudah Check In" : "Check In"}
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    className="h-14 text-lg w-full bg-white"
+                                    onClick={handleCheckOut}
+                                    disabled={!isCheckedIn || isCheckedOut}
+                                >
+                                    {isCheckedOut ? "Sudah Check Out" : "Check Out"}
+                                </Button>
+                            </div>
+                        )}
+
+                        <div className="max-w-lg mx-auto mt-4">
+                            <Button
+                                variant="white"
+                                className="w-full text-slate-500 hover:text-slate-700 bg-transparent border-0 hover:bg-slate-100/50"
+                                onClick={() => setIsPermissionModalOpen(true)}
+                            >
+                                Ajukan Izin
+                            </Button>
                         </div>
                     </div>
 
-                    <Card className="w-full p-8 border border-slate-100 shadow-sm bg-white rounded-xl">
-                        <div className="bg-slate-50 rounded-[16px] p-8 mb-8 border border-slate-100 relative">
-                            {/* Realtime Clock */}
-                            <div className="flex flex-col items-center justify-center mb-8 text-center">
-                                <p className="text-sm font-medium text-slate-500 mb-2 uppercase tracking-wide">Waktu Sekarang</p>
-                                <h2 className="text-6xl font-bold text-slate-900 tracking-tight tabular-nums mb-2">
-                                    {currentTime ? formatTime(currentTime) : "00:00:00"}
-                                </h2>
-                                <p className="text-lg text-slate-600 font-medium">
-                                    {currentTime ? formatDate(currentTime) : "..."}
-                                </p>
-                            </div>
-
-                            {/* Action Buttons */}
-                            {todayStatus !== "izin" && (
-                                <div className="grid grid-cols-2 gap-4 max-w-lg mx-auto mt-8">
-                                    <Button
-                                        className="h-14 text-lg w-full bg-[#00A3FF] hover:bg-[#0092E6]"
-                                        onClick={handleCheckIn}
-                                        disabled={isCheckedIn}
-                                    >
-                                        {isCheckedIn ? "Sudah Check In" : "Check In"}
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        className="h-14 text-lg w-full bg-white"
-                                        onClick={handleCheckOut}
-                                        disabled={!isCheckedIn || isCheckedOut}
-                                    >
-                                        {isCheckedOut ? "Sudah Check Out" : "Check Out"}
-                                    </Button>
-                                </div>
-                            )}
-
-                            <div className="max-w-lg mx-auto mt-4">
-                                <Button
-                                    variant="white"
-                                    className="w-full text-slate-500 hover:text-slate-700 bg-transparent border-0 hover:bg-slate-100/50"
-                                    onClick={() => setIsPermissionModalOpen(true)}
-                                >
-                                    Ajukan Izin
+                    <div>
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="font-semibold text-slate-900">Riwayat Kehadiran Minggu Ini</h3>
+                            <Link href="/employee/recap">
+                                <Button variant="ghost" size="sm" className="text-[#00A3FF] hover:text-[#0092E6] hover:bg-blue-50">
+                                    Lihat Rekap Bulanan
                                 </Button>
-                            </div>
+                            </Link>
                         </div>
 
-                        <div>
-                            <h3 className="font-semibold mb-4 text-slate-900">Riwayat Kehadiran Minggu Ini</h3>
-                            <div className="space-y-4">
-                                {history.map((item, i) => (
-                                    <div key={i} className="flex items-center justify-between py-3 border-b border-slate-50 last:border-0 hover:bg-slate-50/50 px-2 rounded-lg transition-colors">
-                                        <div>
-                                            <p className="text-sm font-medium text-slate-900">{item.day}</p>
-                                            <p className="text-xs text-slate-400">{item.time}</p>
-                                        </div>
-                                        <Badge
-                                            variant={item.status === 'hadir' ? 'success' : item.status === 'izin' ? 'warning' : 'danger'}
-                                            className={
-                                                item.status === 'hadir' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                                                    item.status === 'izin' ? "bg-yellow-50 text-yellow-600 border-yellow-100" :
-                                                        "bg-red-50 text-red-600 border-red-100"
-                                            }
-                                        >
-                                            {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-                                        </Badge>
+                        <div className="space-y-4">
+                            {history.map((item, i) => (
+                                <div key={i} className="flex items-center justify-between py-3 border-b border-slate-50 last:border-0 hover:bg-slate-50/50 px-2 rounded-lg transition-colors">
+                                    <div>
+                                        <p className="text-sm font-medium text-slate-900">{item.day}</p>
+                                        <p className="text-xs text-slate-400">{item.date}</p>
                                     </div>
-                                ))}
-                            </div>
+                                    <div className="text-right">
+                                        <div className="mb-1">
+                                            <Badge
+                                                variant={item.status === 'hadir' ? 'success' : item.status === 'izin' ? 'warning' : 'danger'}
+                                                className={
+                                                    item.status === 'hadir' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                                                        item.status === 'izin' ? "bg-yellow-50 text-yellow-600 border-yellow-100" :
+                                                            "bg-red-50 text-red-600 border-red-100"
+                                                }
+                                            >
+                                                {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+                                            </Badge>
+                                        </div>
+                                        <p className="text-xs text-slate-500">{item.time}</p>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
-                    </Card>
-                </div>
-            </div>
+
+                        <div className="mt-6 pt-4 border-t border-slate-100 md:hidden">
+                            <Link href="/employee/recap">
+                                <Button variant="white" className="w-full text-slate-600 border border-slate-200">
+                                    <CalendarIcon className="w-4 h-4 mr-2" />
+                                    Lihat Rekap Bulanan
+                                </Button>
+                            </Link>
+                        </div>
+                    </div>
+                </Card>
+            </main>
 
             {/* Permission Modal */}
             <Modal
@@ -268,6 +305,6 @@ export default function EmployeeAttendancePage() {
                     </div>
                 </div>
             </Modal>
-        </DashboardLayout>
+        </div>
     );
 }

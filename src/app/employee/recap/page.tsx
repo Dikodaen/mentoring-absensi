@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/Badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/Table";
 import { ArrowLeft, Clock, Calendar as CalendarIcon, FileBarChart } from "lucide-react";
 import Link from "next/link";
-import DashboardLayout from "@/components/layout/DashboardLayout";
 
 export default function RecapPage() {
     const history = [
@@ -20,11 +19,11 @@ export default function RecapPage() {
     ];
 
     return (
-        <DashboardLayout>
-            <div className="w-full space-y-4">
-                <Link href="/employee/dashboard" className="inline-flex items-center text-slate-400 hover:text-slate-600 mb-4 transition-colors">
+        <div className="min-h-screen bg-[#F8FAFC]">
+            <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-4">
+                <Link href="/employee/attendance" className="inline-flex items-center text-slate-400 hover:text-slate-600 mb-4 transition-colors">
                     <ArrowLeft className="w-4 h-4 mr-2" />
-                    Kembali ke Dashboard
+                    Kembali ke Absensi
                 </Link>
 
                 <Card className="w-full p-8 border-none shadow-sm bg-white">
@@ -107,6 +106,6 @@ export default function RecapPage() {
 
                 </Card>
             </div>
-        </DashboardLayout>
+        </div>
     );
 }
