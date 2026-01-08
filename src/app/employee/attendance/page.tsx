@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/Input";
 import { Calendar as CalendarIcon, Upload, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { authService } from "@/lib/auth";
 
 interface AttendanceRecord {
     day: string;
@@ -43,6 +44,12 @@ export default function EmployeeAttendancePage() {
         date: "",
         reason: "",
     });
+
+    useEffect(() => {
+        if (!authService.isAuthenticated()) {
+            router.push("/login");
+        }
+    }, [router]);
 
     useEffect(() => {
         setCurrentTime(new Date());
@@ -124,6 +131,7 @@ export default function EmployeeAttendancePage() {
     };
 
     const handleLogout = () => {
+        authService.logout();
         router.push("/login");
     };
 

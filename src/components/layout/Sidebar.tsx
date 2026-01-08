@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { LayoutDashboard, Users, Clock, Monitor, LogOut } from "lucide-react";
+import { authService } from "@/lib/auth";
 
 const menuItems = [
     {
@@ -30,6 +32,18 @@ const menuItems = [
 
 export function Sidebar() {
     const pathname = usePathname();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!authService.isAuthenticated()) {
+            router.push("/login");
+        }
+    }, [router]);
+
+    const handleLogout = () => {
+        authService.logout();
+        router.push("/login");
+    };
 
     return (
         <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-white border-r border-slate-100 flex flex-col">
@@ -74,7 +88,10 @@ export function Sidebar() {
                         <span className="text-xs text-slate-400">admin@gmail.com</span>
                     </div>
                 </div>
-                <button className="flex w-full items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-red-500 hover:bg-red-50 transition-colors">
+                <button
+                    onClick={handleLogout}
+                    className="flex w-full items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-red-500 hover:bg-red-50 transition-colors"
+                >
                     <LogOut className="h-4 w-4" />
                     Logout
                 </button>

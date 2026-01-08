@@ -1,13 +1,24 @@
 "use client";
 
+import { useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/Table";
 import { ArrowLeft, Clock, Calendar as CalendarIcon, FileBarChart } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { authService } from "@/lib/auth";
 
 export default function RecapPage() {
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!authService.isAuthenticated()) {
+            router.push("/login");
+        }
+    }, [router]);
+
     const history = [
         { date: "1 Nov 2025", in: "08:00", out: "17:00", total: "9 jam", status: "Hadir", desc: "-" },
         { date: "2 Nov 2025", in: "08:15", out: "17:10", total: "8 jam 55 menit", status: "Hadir", desc: "-" },

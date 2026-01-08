@@ -55,9 +55,39 @@ export const authService = {
         // Return user without password
         const { password: _, ...userWithoutPassword } = user;
 
-        return {
+        const response = {
             user: userWithoutPassword as AuthResponse['user'],
             token: 'mock-jwt-token-' + Date.now()
         };
+
+        // Save to localStorage
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('auth_token', response.token);
+            localStorage.setItem('user_session', JSON.stringify(response.user));
+        }
+
+        return response;
+    },
+
+    logout() {
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user_session');
+        }
+    },
+
+    getUser() {
+        if (typeof window !== 'undefined') {
+            const userStr = localStorage.getItem('user_session');
+            if (userStr) return JSON.parse(userStr);
+        }
+        return null;
+    },
+
+    isAuthenticated() {
+        if (typeof window !== 'undefined') {
+            return !!localStorage.getItem('auth_token');
+        }
+        return false;
     }
 };
